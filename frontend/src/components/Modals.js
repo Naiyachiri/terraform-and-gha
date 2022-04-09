@@ -85,6 +85,17 @@ function CustomModal({
               placeholder="http://blahblah.com"
             />
           </FormGroup>
+          <FormGroup>
+            <Label for="todo-description">Tags</Label>
+            <Input
+              type="text"
+              id="todo-description"
+              name="tags"
+              value={localItem.tags}
+              onChange={(e) => handleChange(e)}
+              placeholder="demo, terraform, test"
+            />
+          </FormGroup>
           <FormGroup check>
             <Label check>
               <Input

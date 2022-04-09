@@ -1,58 +1,62 @@
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 import Modal from './components/Modals';
 
-//temp values until we set up the rest calls
-const projectItems = [
-  {
-    id: 1,
-    title: "Project 1",
-    description: "OG Portfolio",
-    completed: true,
-    thumbnail_url: "",
-    project_url: "",
-    tags: []
-  },
-  {
-    id: 2,
-    title: "React Django Portfolio",
-    description: "React, Django, SQLite, GHA, Terraform, AWS",
-    completed: false,
-    thumbnail_url: "",
-    project_url: "",
-    tags: []
-  },
-]
-
 // Entrypoint into the React App
 function App() {
+
   const [view, setView] = useState('all');
   // links local list of projects with what ever the future API call retrieves
-  let [projectList, setProjectList] = useState(projectItems);
+  let [projectList, setProjectList] = useState([]);
   // determines whether or not the modal displays
   let [showModal, setShowModal] = useState(false);
   // contains the data regarding selected item for the modal
   let [activeItem, setActiveItem] = useState({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
     completed: false
   });
+
+  // on render we want to pull the API to get the list of projects
+  useEffect(() => {
+    refreshList();
+  }, [])
+
+  // refreshes the project list
+  let refreshList = () => {
+    axios
+      .get('/api/todos/')
+      .then(res => setProjectList(res.data))
+      .catch(error => console.error(error));
+  }
 
   // logic regarding toggling the modal show state
   let toggleModal = () => {
     return setShowModal(!showModal);
   }
 
-  // submits updated model
+  // handles create and update actions
   let submitItem = (item) => {
     toggleModal();
-    alert(`save ${JSON.stringify(item)}`)
+    // if we are updating a specific item
+    if (item.id) {
+      axios
+        .put(`/api/todos/${item.id}/`, item)
+        .then(res => refreshList);
+      return;
+    }
+    axios
+      .post('/api/todos/', item)
+      .then(res => refreshList());
   }
 
   // deletes selected model
   let deleteItem = (item) => {
-    alert(`delete ${JSON.stringify(item)}`)
+    axios
+      .delete(`/api/todos/${item.id}`)
+      .then(res => refreshList())
   }
 
   // opens modal for editing a project
@@ -70,7 +74,8 @@ function App() {
       completed: false,
       thumbnail_url: '',
       project_url: '',
-      tags: []
+      // TODO modify to a list and use chips to add / remove & update the backend
+      tags: ''
     }
     setActiveItem({ ...item });
     toggleModal();
