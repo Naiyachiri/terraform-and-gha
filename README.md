@@ -36,4 +36,6 @@ Infrastructure Deployment Tool:
 Service Management:
  - Containerized Services
 
-
+References:
+[Python/ Django setup](https://www.digitalocean.com/community/tutorials/build-a-to-do-application-using-django-and-react)
+ - note: I used a docker dev remote server to run my python, so there would be small deviations for that
